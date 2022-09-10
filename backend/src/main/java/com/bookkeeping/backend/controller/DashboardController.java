@@ -1,5 +1,6 @@
 package com.bookkeeping.backend.controller;
 
+import com.bookkeeping.backend.entity.ReconciliationYearGross;
 import com.bookkeeping.backend.entity.YearGross;
 import com.bookkeeping.backend.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,5 +16,10 @@ public class DashboardController {
     @GetMapping("/common-income-cost/{year}")
     public YearGross getGrossIncomeAndCost(@PathVariable Integer year) {
         return this.dashboardService.getYearGross(year);
+    }
+
+    @GetMapping("/reconciliation-income-cost/{year}")
+    public ReconciliationYearGross getReconGrossIncomeAndCost(@PathVariable Integer year) {
+        return this.dashboardService.getReconciliationYearGross(year);
     }
 }

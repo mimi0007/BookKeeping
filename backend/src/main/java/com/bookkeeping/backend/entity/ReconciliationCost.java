@@ -2,10 +2,7 @@ package com.bookkeeping.backend.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
@@ -13,11 +10,16 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @ToString
-@Table(name = "income")
-public class Income {
+@Table(name = "recon_cost")
+public class ReconciliationCost {
     @Id
     @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(nullable = false)
     private Integer year;
+    @Column(nullable = false)
+    private String type;
     private Integer jan;
     private Integer feb;
     private Integer mar;
