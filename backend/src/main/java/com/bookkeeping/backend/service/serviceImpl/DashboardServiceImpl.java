@@ -9,16 +9,15 @@ import com.bookkeeping.backend.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.bookkeeping.backend.utility.Constants.MONTH_NAMES;
+import static com.bookkeeping.backend.utility.Constants.NUMBER_OF_MONTH;
+
 @Service
 public class DashboardServiceImpl implements DashboardService {
-
-    public static String[] MONTH_NAMES = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"};
-    public static Integer NUMBER_OF_MONTH = 12;
-
     @Autowired
     private IncomeDao incomeDao;
     @Autowired
@@ -32,7 +31,6 @@ public class DashboardServiceImpl implements DashboardService {
     public YearGross getYearGross(Integer year) {
         Income income = getYearIncome(year);
         Cost cost = getYearCost(year);
-
         return new YearGross(income, cost, getCumulativeIncome(income), getCumulativeCost(cost), getResult(income, cost));
     }
 
@@ -51,7 +49,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private Map<String, Integer> getCumulativeFinalResult(Map<String, Integer> finalResult) {
-        Map<String, Integer> cumulativeFinalResult = new HashMap<>();
+        Map<String, Integer> cumulativeFinalResult = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
@@ -74,7 +72,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private Map<String, Integer> getFinalResult(Map<String, Integer> reconciliationResult, Map<String, Integer> result) {
-        Map<String, Integer> finalResult = new HashMap<>();
+        Map<String, Integer> finalResult = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
@@ -90,7 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private Map<String, Integer> getReconciliationResult(List<ReconciliationIncome> reconciliationIncome,
                                                          List<ReconciliationCost> reconciliationCost) {
-        Map<String, Integer> reconciliationResult = new HashMap<>();
+        Map<String, Integer> reconciliationResult = new LinkedHashMap<>();
         Map<String, Integer> totalReconciliationIncome = getTotalReconciliationIncome(reconciliationIncome);
         Map<String, Integer> totalReconciliationCost = getTotalReconciliationCost(reconciliationCost);
 
@@ -107,14 +105,14 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private Map<String, Integer> getTotalReconciliationIncome(List<ReconciliationIncome> reconciliationIncome) {
-        Map<String, Integer> totalReconciliationIncome = new HashMap<>();
+        Map<String, Integer> totalReconciliationIncome = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
             int yearTotalReconciliationIncome = 0;
 
             for (int index = 0; index < reconciliationIncome.size(); index++) {
-                Integer monthReconciliationIncome = reconciliationIncome.get(index).getMonthValue(monthName);
+                Integer monthReconciliationIncome = reconciliationIncome.get(index).getMonths().getMonthValue(monthName);
                 if (monthReconciliationIncome != null) {
                     yearTotalReconciliationIncome += monthReconciliationIncome;
                 }
@@ -126,7 +124,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private Map<String, Integer> getTotalReconciliationCost(List<ReconciliationCost> reconciliationCost) {
-        Map<String, Integer> totalReconciliationCost = new HashMap<>();
+        Map<String, Integer> totalReconciliationCost = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
@@ -134,7 +132,7 @@ public class DashboardServiceImpl implements DashboardService {
 
             for (int index = 0; index < reconciliationCost.size(); index++) {
                 ReconciliationCost reconciliationCostByType = reconciliationCost.get(index);
-                Integer monthReconciliationCostByType = reconciliationCostByType.getMonthValue(monthName);
+                Integer monthReconciliationCostByType = reconciliationCostByType.getMonths().getMonthValue(monthName);
 
                 if (monthReconciliationCostByType != null) {
                     yearTotalReconciliationCost += monthReconciliationCostByType;
@@ -163,12 +161,12 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private Map<String, Integer> getResult(Income income, Cost cost) {
-        Map<String, Integer> result = new HashMap<>();
+        Map<String, Integer> result = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
-            Integer monthIncome = income.getMonthValue(monthName);
-            Integer monthCost = cost.getMonthValue(monthName);
+            Integer monthIncome = income.getMonths().getMonthValue(monthName);
+            Integer monthCost = cost.getMonths().getMonthValue(monthName);
             Integer monthResult = monthIncome - monthCost;
 
             result.put(monthName, monthResult);
@@ -178,11 +176,11 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     public Map<String, Integer> getCumulativeIncome(Income income) {
-        Map<String, Integer> cumulativeIncome = new HashMap<>();
+        Map<String, Integer> cumulativeIncome = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
-            Integer monthIncome = income.getMonthValue(monthName);
+            Integer monthIncome = income.getMonths().getMonthValue(monthName);
 
             if (month == 0) {
                 cumulativeIncome.put(monthName, monthIncome);
@@ -198,11 +196,11 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     public Map<String, Integer> getCumulativeCost(Cost cost) {
-        Map<String, Integer> cumulativeCost = new HashMap<>();
+        Map<String, Integer> cumulativeCost = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
-            Integer monthCost = cost.getMonthValue(monthName);
+            Integer monthCost = cost.getMonths().getMonthValue(monthName);
 
             if (month == 0) {
                 cumulativeCost.put(monthName, monthCost);
