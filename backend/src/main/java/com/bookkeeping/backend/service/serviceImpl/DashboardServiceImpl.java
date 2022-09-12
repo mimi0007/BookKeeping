@@ -9,6 +9,7 @@ import com.bookkeeping.backend.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class DashboardServiceImpl implements DashboardService {
     public YearGross getYearGross(Integer year) {
         Income income = getYearIncome(year);
         Cost cost = getYearCost(year);
+
         return new YearGross(income, cost, getCumulativeIncome(income), getCumulativeCost(cost), getResult(income, cost));
     }
 
@@ -46,6 +48,21 @@ public class DashboardServiceImpl implements DashboardService {
 
         return new ReconciliationYearGross(reconciliationIncome, reconciliationCost,
                 reconciliationResult, finalResult, cumulativeFinalResult);
+    }
+
+    @Override
+    public List<Integer> getYears() {
+        List<Integer> yearListFromIncome = incomeDao.findYears();
+        List<Integer> yearListFromCost = costDao.findYears();
+        List<Integer> years = new ArrayList<>();
+
+        for (Integer incomeYear : yearListFromIncome) {
+            if (yearListFromCost.contains(incomeYear)) {
+                years.add(incomeYear);
+            }
+        }
+
+        return years;
     }
 
     private Map<String, Integer> getCumulativeFinalResult(Map<String, Integer> finalResult) {
