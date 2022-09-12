@@ -59,4 +59,45 @@ public class Months {
                 return dec;
         }
     }
+
+    public void setMonthValue(String monthName, Integer monthValue) {
+        switch (monthName) {
+            case "jan":
+                setJan(monthValue);
+                break;
+            case "feb":
+                setFeb(monthValue);
+                break;
+            case "mar":
+                setMar(monthValue);
+                break;
+            case "apr":
+                setApr(monthValue);
+                break;
+            case "may":
+                setMay(monthValue);
+                break;
+            case "jun":
+                setJun(monthValue);
+                break;
+            case "jul":
+                setJul(monthValue);
+                break;
+            case "aug":
+                setAug(monthValue);
+                break;
+            case "sep":
+                setSep(monthValue);
+                break;
+            case "oct":
+                setOct(monthValue);
+                break;
+            case "nov":
+                setNov(monthValue);
+                break;
+            default:
+                setDec(monthValue);
+                break;
+        }
+    }
 }
