@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/dashboard")
 public class DashboardController {
     @Autowired
-    private DashboardService dashboardService;
+    public DashboardService dashboardService;
 
     @GetMapping("/common-income-cost/{year}")
     public YearGross getGrossIncomeAndCost(@PathVariable Integer year) {
