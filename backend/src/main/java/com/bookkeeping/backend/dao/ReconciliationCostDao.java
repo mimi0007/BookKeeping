@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ReconciliationCostDao extends JpaRepository<ReconciliationCost, Integer> {
     List<ReconciliationCost> findAllCostByYear(Integer year);
+
     ReconciliationCost findReconciliationIncomeByYearAndType(Integer year, String type);
 }
