@@ -40,7 +40,9 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         String monthName = monthInfoAccess.getMonthName();
         String type = monthInfoAccess.getType();
 
-        ReconciliationIncome reconciliationIncome = reconciliationIncomeDao.findReconciliationIncomeByYearAndType(year, type);
+        ReconciliationIncome reconciliationIncome =
+                reconciliationIncomeDao.findReconciliationIncomeByYearAndType(year, type);
+
         reconciliationIncome.getMonths().setMonthValue(monthName, monthValue);
         monthsDao.save(reconciliationIncome.getMonths());
     }
@@ -52,7 +54,9 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         String monthName = monthInfoAccess.getMonthName();
         String type = monthInfoAccess.getType();
 
-        ReconciliationCost reconciliationCost = reconciliationCostDao.findReconciliationIncomeByYearAndType(year, type);
+        ReconciliationCost reconciliationCost =
+                reconciliationCostDao.findReconciliationIncomeByYearAndType(year, type);
+
         reconciliationCost.getMonths().setMonthValue(monthName, monthValue);
         monthsDao.save(reconciliationCost.getMonths());
     }
