@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reconciliation")
 public class ReconciliationController {
     @Autowired
-    ReconciliationService reconciliationService;
+    public ReconciliationService reconciliationService;
 
     @PostMapping("/add-income")
     public ResponseEntity<HttpStatus> addReconciliationIncome(@RequestBody ReconciliationIncome reconciliationIncome) {
