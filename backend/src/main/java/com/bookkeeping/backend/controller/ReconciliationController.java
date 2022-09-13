@@ -1,7 +1,7 @@
 package com.bookkeeping.backend.controller;
 
 import com.bookkeeping.backend.entity.MonthInfoAccess;
-import com.bookkeeping.backend.entity.ReconciliationCost;
+import com.bookkeeping.backend.entity.ReconciliationExpense;
 import com.bookkeeping.backend.entity.ReconciliationIncome;
 import com.bookkeeping.backend.service.ReconciliationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,10 @@ public class ReconciliationController {
         }
     }
 
-    @PostMapping("/add-cost")
-    public ResponseEntity<HttpStatus> addReconciliationCost(@RequestBody ReconciliationCost reconciliationCost) {
+    @PostMapping("/add-expense")
+    public ResponseEntity<HttpStatus> addReconciliationExpense(@RequestBody ReconciliationExpense reconciliationExpense) {
         try {
-            this.reconciliationService.addReconciliationCost(reconciliationCost);
+            this.reconciliationService.addReconciliationExpense(reconciliationExpense);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -45,10 +45,10 @@ public class ReconciliationController {
         }
     }
 
-    @PutMapping("/update-cost")
+    @PutMapping("/update-expense")
     public ResponseEntity<HttpStatus> updateReconciliationCost(@RequestBody MonthInfoAccess monthInfoAccess) {
         try {
-            this.reconciliationService.updateReconciliationCost(monthInfoAccess);
+            this.reconciliationService.updateReconciliationExpense(monthInfoAccess);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
