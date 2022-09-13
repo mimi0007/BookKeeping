@@ -1,15 +1,15 @@
 package com.bookkeeping.backend.service;
 
 import com.bookkeeping.backend.entity.MonthInfoAccess;
-import com.bookkeeping.backend.entity.ReconciliationCost;
+import com.bookkeeping.backend.entity.ReconciliationExpense;
 import com.bookkeeping.backend.entity.ReconciliationIncome;
 
 public interface ReconciliationService {
     void addReconciliationIncome(ReconciliationIncome reconciliationIncome);
 
-    void addReconciliationCost(ReconciliationCost reconciliationCost);
+    void addReconciliationExpense(ReconciliationExpense reconciliationExpense);
 
-    void updateReconciliationIncome(MonthInfoAccess monthInfoAccess);
+    void updateReconciliationIncome(MonthInfoAccess monthInfoAccess) throws NoSuchFieldException;
 
-    void updateReconciliationCost(MonthInfoAccess monthInfoAccess);
+    void updateReconciliationExpense(MonthInfoAccess monthInfoAccess);
 }

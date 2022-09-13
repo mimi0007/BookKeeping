@@ -13,7 +13,7 @@ import java.util.Map;
 @ToString
 public class ReconciliationYearGross {
     private List<ReconciliationIncome> reconciliationIncome;
-    private List<ReconciliationCost> reconciliationCost;
+    private List<ReconciliationExpense> reconciliationExpense;
     private Map<String, Integer> reconciliationResult;
     private Map<String, Integer> finalResult;
     private Map<String, Integer> cumulativeFinalResult;

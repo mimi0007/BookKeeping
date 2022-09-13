@@ -16,7 +16,7 @@ public class ReconciliationIncome {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "year", nullable = false)
+    @Column(nullable = false)
     private Integer year;
 
     @OneToOne

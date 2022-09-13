@@ -2,17 +2,14 @@ package com.bookkeeping.backend.service.serviceImpl;
 
 import com.bookkeeping.backend.dao.CostDao;
 import com.bookkeeping.backend.dao.IncomeDao;
-import com.bookkeeping.backend.dao.ReconciliationCostDao;
+import com.bookkeeping.backend.dao.ReconciliationExpenseDao;
 import com.bookkeeping.backend.dao.ReconciliationIncomeDao;
 import com.bookkeeping.backend.entity.*;
 import com.bookkeeping.backend.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.bookkeeping.backend.utility.Constants.MONTH_NAMES;
 import static com.bookkeeping.backend.utility.Constants.NUMBER_OF_MONTH;
@@ -20,33 +17,43 @@ import static com.bookkeeping.backend.utility.Constants.NUMBER_OF_MONTH;
 @Service
 public class DashboardServiceImpl implements DashboardService {
     @Autowired
-    private IncomeDao incomeDao;
+    IncomeDao incomeDao;
     @Autowired
-    private CostDao costDao;
+    CostDao costDao;
     @Autowired
-    private ReconciliationIncomeDao reconciliationIncomeDao;
+    ReconciliationIncomeDao reconciliationIncomeDao;
     @Autowired
-    private ReconciliationCostDao reconciliationCostDao;
+    ReconciliationExpenseDao reconciliationExpenseDao;
 
     @Override
     public YearGross getYearGross(Integer year) {
         Income income = getYearIncome(year);
         Cost cost = getYearCost(year);
 
+        if (income == null || cost == null) {
+            return null;
+        }
+
         return new YearGross(income, cost, getCumulativeIncome(income), getCumulativeCost(cost), getResult(income, cost));
     }
 
     @Override
     public ReconciliationYearGross getReconciliationYearGross(Integer year) {
-        List<ReconciliationIncome> reconciliationIncome = getReconciliationYearIncome(year);
-        List<ReconciliationCost> reconciliationCost = getReconciliationYearCost(year);
         Income income = getYearIncome(year);
         Cost cost = getYearCost(year);
-        Map<String, Integer> reconciliationResult = getReconciliationResult(reconciliationIncome, reconciliationCost);
+
+        if(income == null || cost == null) {
+            return null;
+        }
+
+        List<ReconciliationIncome> reconciliationIncome = getReconciliationYearIncome(year);
+        List<ReconciliationExpense> reconciliationExpense = getReconciliationYearExpense(year);
+
+        Map<String, Integer> reconciliationResult = getReconciliationResult(reconciliationIncome, reconciliationExpense);
         Map<String, Integer> finalResult = getFinalResult(reconciliationResult, getResult(income, cost));
         Map<String, Integer> cumulativeFinalResult = getCumulativeFinalResult(finalResult);
 
-        return new ReconciliationYearGross(reconciliationIncome, reconciliationCost,
+        return new ReconciliationYearGross(reconciliationIncome, reconciliationExpense,
                 reconciliationResult, finalResult, cumulativeFinalResult);
     }
 
@@ -104,15 +111,15 @@ public class DashboardServiceImpl implements DashboardService {
 
 
     private Map<String, Integer> getReconciliationResult(List<ReconciliationIncome> reconciliationIncome,
-                                                         List<ReconciliationCost> reconciliationCost) {
+                                                         List<ReconciliationExpense> reconciliationExpense) {
         Map<String, Integer> reconciliationResult = new LinkedHashMap<>();
         Map<String, Integer> totalReconciliationIncome = getTotalReconciliationIncome(reconciliationIncome);
-        Map<String, Integer> totalReconciliationCost = getTotalReconciliationCost(reconciliationCost);
+        Map<String, Integer> totalReconciliationExpense = getTotalReconciliationExpense(reconciliationExpense);
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
             Integer monthReconciliationIncome = totalReconciliationIncome.get(monthName);
-            Integer monthReconciliationCost = totalReconciliationCost.get(monthName);
+            Integer monthReconciliationCost = totalReconciliationExpense.get(monthName);
             Integer totalReconciliationValue = monthReconciliationIncome - monthReconciliationCost;
 
             reconciliationResult.put(monthName, totalReconciliationValue);
@@ -140,41 +147,53 @@ public class DashboardServiceImpl implements DashboardService {
         return totalReconciliationIncome;
     }
 
-    private Map<String, Integer> getTotalReconciliationCost(List<ReconciliationCost> reconciliationCost) {
-        Map<String, Integer> totalReconciliationCost = new LinkedHashMap<>();
+    private Map<String, Integer> getTotalReconciliationExpense(List<ReconciliationExpense> reconciliationExpense) {
+        Map<String, Integer> totalReconciliationExpense = new LinkedHashMap<>();
 
         for (int month = 0; month < NUMBER_OF_MONTH; month++) {
             String monthName = MONTH_NAMES[month];
-            int yearTotalReconciliationCost = 0;
+            int yearTotalReconciliationExpense = 0;
 
-            for (int index = 0; index < reconciliationCost.size(); index++) {
-                ReconciliationCost reconciliationCostByType = reconciliationCost.get(index);
-                Integer monthReconciliationCostByType = reconciliationCostByType.getMonths().getMonthValue(monthName);
+            for (int index = 0; index < reconciliationExpense.size(); index++) {
+                ReconciliationExpense reconciliationExpenseByType = reconciliationExpense.get(index);
+                Integer monthReconciliationExpenseByType = reconciliationExpenseByType.getMonths().getMonthValue(monthName);
 
-                if (monthReconciliationCostByType != null) {
-                    yearTotalReconciliationCost += monthReconciliationCostByType;
+                if (monthReconciliationExpenseByType != null) {
+                    yearTotalReconciliationExpense += monthReconciliationExpenseByType;
                 }
             }
-            totalReconciliationCost.put(monthName, yearTotalReconciliationCost);
+            totalReconciliationExpense.put(monthName, yearTotalReconciliationExpense);
         }
 
-        return totalReconciliationCost;
+        return totalReconciliationExpense;
     }
 
     private List<ReconciliationIncome> getReconciliationYearIncome(Integer year) {
         return reconciliationIncomeDao.findAllIncomeByYear(year);
     }
 
-    private List<ReconciliationCost> getReconciliationYearCost(Integer year) {
-        return reconciliationCostDao.findAllCostByYear(year);
+    private List<ReconciliationExpense> getReconciliationYearExpense(Integer year) {
+        return reconciliationExpenseDao.findAllExpenseByYear(year);
     }
 
     public Income getYearIncome(Integer year) {
-        return incomeDao.findById(year).get();
+        Optional<Income> income = incomeDao.findById(year);
+
+        if (income.isPresent()) {
+            return income.get();
+        } else {
+            return null;
+        }
     }
 
     public Cost getYearCost(Integer year) {
-        return costDao.findById(year).get();
+        Optional<Cost> cost = costDao.findById(year);
+
+        if (cost.isPresent()) {
+            return cost.get();
+        } else {
+            return null;
+        }
     }
 
     private Map<String, Integer> getResult(Income income, Cost cost) {
