@@ -15,7 +15,7 @@ public class Income {
     private Long id;
 
     @Id
-    @Column(name = "year", nullable = false)
+    @Column(nullable = false)
     private Integer year;
 
     @OneToOne
