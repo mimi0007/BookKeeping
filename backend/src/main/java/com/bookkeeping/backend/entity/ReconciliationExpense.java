@@ -10,13 +10,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@Table(name = "recon_cost")
-public class ReconciliationCost {
+@Table(name = "recon_expense")
+public class ReconciliationExpense {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "year", nullable = false)
+    @Column(nullable = false)
     private Integer year;
 
     @OneToOne
